@@ -8,8 +8,13 @@ env:
   MONGODB_DB_NAME: gha-demo      
 jobs:
   test:
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017    
     env:
-      MONGODB_CLUSTER_ADDRESS: mongodb://localhost:27017
+      MONGODB_CLUSTER_ADDRESS: 127.0.0.1:27017
       PORT: 8080      
     environment: testing
     runs-on: ubuntu-latest
@@ -29,12 +34,12 @@ jobs:
         run: npm test
       - name: Output information
         run: |
-          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_CLUSTER_ADDRESS }}"
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Output information
         run: |        
-          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_CLUSTER_ADDRESS }}"
           echo "MONGODB_DB_NAME: ${{ env.MONGODB_DB_NAME }}"
